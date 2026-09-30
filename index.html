@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ساعة المرح – تعلّم الساعة</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#ffd9ec;--bg2:#e6d4ff;--card:#fff;--ink:#3a2a4d;--hour:#ff4f9a;--min:#8e5bd6;--ok:#2fc58a;--bad:#ff8a5c;--accent:#ffc4e1;--face:#fff8fc;--rim:#ff8fc7;--dot:#0002;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#4a1f45;--bg2:#241a4a;--card:#33213f;--ink:#fdeefb;--face:#3d2a4d;--dot:#fff3}}
+:root[data-theme="dark"]{--bg1:#4a1f45;--bg2:#241a4a;--card:#33213f;--ink:#fdeefb;--face:#3d2a4d;--dot:#fff3}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;font-family:'Baloo Bhaijaan 2','Segoe UI',Tahoma,sans-serif;color:var(--ink);background:linear-gradient(160deg,var(--bg1),var(--bg2));background-color:var(--bg2)}
+.wrap{max-width:520px;margin:0 auto;padding:12px}
+h1{text-align:center;font-size:clamp(24px,6vw,36px);margin:6px 0 10px;font-weight:800}
+.tabs{display:flex;gap:8px;margin-bottom:10px}
+.tab{flex:1;border:0;border-radius:18px;padding:10px 4px;font:inherit;font-size:clamp(15px,4.2vw,20px);font-weight:700;background:var(--card);color:var(--ink);cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.15)}
+.tab.on{background:var(--accent);color:#2b2d42;transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.card{background:var(--card);border-radius:28px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+svg{display:block;width:100%;max-width:340px;margin:0 auto;user-select:none;-webkit-user-select:none}
+.hand{transition:transform var(--t,.9s) cubic-bezier(.4,1.25,.6,1);transform-origin:150px 150px;transform-box:view-box}
+svg.drag .hand{transition:none}
+.num{font-size:26px;font-weight:800;fill:var(--ink);transform-box:fill-box;transform-origin:center}
+.mn{font-size:14px;font-weight:800;fill:var(--min);opacity:0;transition:opacity .5s}
+[data-hl=mins] .mn{opacity:1}
+[data-hl=nums] .num{animation:pop .9s infinite}
+[data-hl=hour] #hH,[data-hl=min] #hM{filter:drop-shadow(0 0 7px gold);animation:pulse .9s infinite}
+@keyframes pop{50%{transform:scale(1.5)}}
+@keyframes pulse{50%{opacity:.55}}
+@keyframes bob{50%{transform:translateY(-5px)}}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+#dig{font-size:clamp(34px,9vw,52px);font-weight:800;text-align:center;direction:ltr;color:var(--min);line-height:1.1;margin-top:4px}
+#sayT{text-align:center;font-size:22px;font-weight:700;min-height:1.5em}
+[data-m=quiz] #dig,[data-m=quiz] #sayT{display:none}
+.pn[hidden]{display:none}
+.bub{display:flex;gap:10px;align-items:center;background:var(--accent);color:#2b2d42;border-radius:20px;padding:10px 14px;margin-top:10px;font-size:clamp(16px,4.3vw,21px);line-height:1.5;font-weight:500}
+.bub p{margin:0}
+.owl{width:60px;height:60px;flex:none;animation:bob 2s infinite}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+.btn{border:0;border-radius:18px;padding:10px 18px;font:inherit;font-size:20px;font-weight:700;color:#fff;background:var(--min);cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.btn.ok{background:#04a77d}
+.btn:disabled{opacity:.4}
+.dots{text-align:center;margin-top:10px}
+.dots i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--dot);margin:0 3px}
+.dots i.on{background:var(--hour)}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;direction:ltr}
+.choices button{font:inherit;font-size:clamp(24px,7vw,34px);font-weight:800;padding:10px;border-radius:18px;border:3px solid var(--accent);background:var(--card);color:var(--ink);cursor:pointer}
+.choices button.good{background:var(--ok);border-color:var(--ok);color:#fff}
+.choices button.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+.prog{height:12px;border-radius:8px;background:var(--dot);overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--ok);transition:width .4s}
+#qend{text-align:center}
+.big{font-size:56px}
+.cf{position:fixed;top:-30px;font-size:28px;animation:fall 1.8s linear forwards;pointer-events:none;z-index:9}
+.hint{text-align:center;font-size:14px;font-weight:700;opacity:.8;margin-bottom:6px}
+.stage,.side{min-width:0}
+@media (min-width:700px){.wrap{max-width:1040px;padding:22px}.card{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;padding:26px}#clk{max-width:min(100%,68vh)}.tabs{max-width:560px;margin:0 auto 16px}.tab{padding:12px 6px}.bub{padding:14px 18px}.btn{font-size:22px;padding:12px 22px}}
+@media (max-width:360px){.wrap{padding:8px}.card{padding:10px;border-radius:22px}.btn{padding:9px 12px;font-size:17px}.choices{gap:8px}.owl{width:48px;height:48px}}
+.eg{color:var(--min);white-space:nowrap}
+.choices button{display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.2}
+.choices small{font-size:clamp(14px,3.8vw,19px);font-weight:700;color:var(--min);direction:rtl}
+.choices .good small,.choices .bad small{color:#fff}
+@media (prefers-reduced-motion:reduce){.owl,[data-hl] *{animation:none!important}}
+</style>
+</head>
+<body>
+<svg style="position:absolute;width:0;height:0"><symbol id="wz" viewBox="0 0 64 64">
+<circle cx="13" cy="18" r="8" fill="#d98b4e"/><circle cx="51" cy="18" r="8" fill="#d98b4e"/>
+<circle cx="13" cy="18" r="4" fill="#ffb3d1"/><circle cx="51" cy="18" r="4" fill="#ffb3d1"/>
+<ellipse cx="32" cy="38" rx="26" ry="22" fill="#e8a66a"/>
+<ellipse cx="32" cy="46" rx="15" ry="10" fill="#fff3e3"/>
+<circle cx="22" cy="34" r="5" fill="#3a2a4d"/><circle cx="42" cy="34" r="5" fill="#3a2a4d"/>
+<circle cx="23.6" cy="32" r="1.9" fill="#fff"/><circle cx="43.6" cy="32" r="1.9" fill="#fff"/>
+<circle cx="13" cy="44" r="4" fill="#ff8fc7" opacity=".75"/><circle cx="51" cy="44" r="4" fill="#ff8fc7" opacity=".75"/>
+<ellipse cx="32" cy="42" rx="3.5" ry="2.6" fill="#ff5d9e"/>
+<path d="M26 47q6 6 12 0" fill="none" stroke="#3a2a4d" stroke-width="2" stroke-linecap="round"/>
+<path d="M32 15L20 8v14zM32 15l12-7v14z" fill="#ff4f9a"/><circle cx="32" cy="15" r="4.5" fill="#ff80b8"/>
+</symbol></svg>
+<div class="wrap">
+<h1>🎀 ساعة المرح 🎀</h1>
+<div class="tabs">
+<button class="tab on" data-m="learn">📖 تعلّمي</button>
+<button class="tab" data-m="play">🎮 جرّبي</button>
+<button class="tab" data-m="quiz">🏆 اختبار</button>
+</div>
+<div class="card" id="card" data-m="learn">
+<div class="stage">
+<svg id="clk" viewBox="0 0 300 300" aria-label="ساعة"></svg>
+<div id="dig"></div>
+<div id="sayT"></div>
+</div>
+<div class="side">
+
+<div id="learn" class="pn">
+<div class="bub"><svg class="owl" viewBox="0 0 64 64"><use href="#wz"/></svg><p id="lt"></p></div>
+<div class="dots" id="ld"></div>
+<div class="row"><button class="btn" id="lp">⏮ السابق</button><button class="btn ok" id="ln"></button></div>
+</div>
+
+<div id="play" class="pn" hidden>
+<div class="bub"><svg class="owl" viewBox="0 0 64 64"><use href="#wz"/></svg><p>اسحبي العقارب بصباعك يا أمال وشوفي الساعة بتتغير! 👆<br>الوردي القصير = ساعات، البنفسجي الطويل = دقايق.</p></div>
+<div class="row">
+<button class="btn q" data-m="0">تمام</button><button class="btn q" data-m="15">وربع</button><button class="btn q" data-m="30">ونص</button><button class="btn q" data-m="45">إلا ربع</button><button class="btn ok" id="rnd">🎲 ساعة عشوائية</button>
+</div>
+</div>
+
+<div id="quiz" class="pn" hidden>
+<div id="qgame">
+<div class="hint">🎯 الاختبار كله 10 أسئلة بس</div>
+<div class="prog"><i id="pb"></i></div>
+<div class="bub"><svg class="owl" viewBox="0 0 64 64"><use href="#wz"/></svg><p id="qt"></p></div>
+<div id="opts" class="choices"></div>
+<div class="row"><button class="btn ok" id="chk">تأكدي ✔</button><button class="btn" id="nx" hidden>التالي ⏭</button></div>
+</div>
+<div id="qend" hidden></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+const NAMES=['','واحدة','اتنين','تلاتة','أربعة','خمسة','ستة','سبعة','تمانية','تسعة','عشرة','حداشر','اتناشر'];
+const Q=['السؤال الأول','السؤال الثاني','السؤال الثالث','السؤال الرابع','السؤال الخامس','السؤال السادس','السؤال السابع','السؤال الثامن','السؤال التاسع','السؤال العاشر'];
+const pad=n=>String(n).padStart(2,'0'),K=(h,m)=>h+':'+pad(m),rnd=n=>Math.floor(Math.random()*n);
+const svg=$('#clk'),card=$('#card');
+let aH=0,aM=0,snap=6,canDrag=false,drag=null;
+
+// ---- draw clock face
+let s='<circle cx="150" cy="150" r="144" fill="var(--rim)"/><circle cx="150" cy="150" r="132" fill="var(--face)"/>';
+for(let i=0;i<60;i++){const a=i*Math.PI/30,b=i%5==0,r=b?112:119;s+=`<line x1="${150+Math.sin(a)*r}" y1="${150-Math.cos(a)*r}" x2="${150+Math.sin(a)*126}" y2="${150-Math.cos(a)*126}" stroke="var(--ink)" stroke-width="${b?3:1.2}" stroke-linecap="round"/>`}
+for(let i=1;i<=12;i++){const a=i*Math.PI/6,x=150+Math.sin(a)*92,y=150-Math.cos(a)*92;
+s+=`<text class="num" style="animation-delay:${i*.07}s" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central">${i}</text>`;
+s+=`<text class="mn" x="${150+Math.sin(a)*62}" y="${150-Math.cos(a)*62}" text-anchor="middle" dominant-baseline="central">${i*5}</text>`}
+s+='<g class="hand" id="hH"><line x1="150" y1="150" x2="150" y2="86" stroke="var(--hour)" stroke-width="11" stroke-linecap="round"/><circle cx="150" cy="86" r="9" fill="var(--hour)"/></g>';
+s+='<g class="hand" id="hM"><line x1="150" y1="150" x2="150" y2="40" stroke="var(--min)" stroke-width="7" stroke-linecap="round"/><circle cx="150" cy="40" r="8" fill="var(--min)"/></g>';
+s+='<circle cx="150" cy="150" r="10" fill="var(--ink)"/>';
+svg.innerHTML=s;
+const hH=$('#hH'),hM=$('#hM');
+
+function getTime(){const m=Math.round((((aM%360)+360)%360)/6)%60;const ah=((aH%360)+360)%360;let h=Math.round((ah-m*.5)/30);h=((h%12)+12)%12;return{h:h||12,m}}
+const dq=x=>x==1?'دقيقة واحدة':x==2?'دقيقتين':x<=10?x+' دقايق':x+' دقيقة';
+function sayG(h,m){const n=x=>NAMES[x>12?x-12:x],nx=h%12+1;
+ if(m==0)return `الساعة ${n(h)} تمام`;
+ if(m==30)return `الساعة ${n(h)} ونص`;
+ if(m==15)return `الساعة ${n(h)} وربع`;
+ if(m==45)return `الساعة ${n(nx)} إلا ربع`;
+ if(m<30)return `الساعة ${n(h)} و${dq(m)}`;
+ return `الساعة ${n(nx)} إلا ${dq(60-m)}`}
+function egy(h,m){const n=x=>NAMES[x>12?x-12:x],nx=h%12+1;
+ return({5:n(h)+' وخمسة',10:n(h)+' وعشرة',20:n(h)+' وتلت',25:n(h)+' ونص إلا خمسة',35:n(h)+' ونص وخمسة',40:n(nx)+' إلا تلت',50:n(nx)+' إلا عشرة',55:n(nx)+' إلا خمسة'})[m]||''}
+function spoken(h,m){const n=x=>NAMES[x>12?x-12:x],nx=h%12+1;
+ if(m==0)return n(h)+' تمام';if(m==15)return n(h)+' وربع';if(m==30)return n(h)+' ونص';if(m==45)return n(nx)+' إلا ربع';
+ return egy(h,m)||sayG(h,m).replace('الساعة ','')}
+function say(h,m){const e=egy(h,m);return sayG(h,m)+(e?` (${e})`:'')}
+function draw(){hH.style.transform=`rotate(${aH}deg)`;hM.style.transform=`rotate(${aM}deg)`;const t=getTime();$('#dig').textContent=K(t.h,t.m);const e=egy(t.h,t.m);$('#sayT').innerHTML=sayG(t.h,t.m)+(e?` <span class="eg">(${e})</span>`:'')}
+function setTime(h,m,spin){const tm=m*6,th=(h%12)*30+m*.5;
+ let dm=((tm-aM)%360+540)%360-180,dh=((th-aH)%360+540)%360-180;
+ if(spin){dm=((tm-aM)%360+360)%360||360;dh=((th-aH)%360+360)%360||360}
+ svg.style.setProperty('--t',spin?'2.6s':'.9s');aM+=dm;aH+=dh;draw()}
+
+// ---- dragging
+function pAng(e){const r=svg.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2);return[(Math.atan2(x,-y)*180/Math.PI+360)%360,Math.hypot(x,y)/(r.width/300)]}
+const dd=(a,b)=>Math.abs(((a-b)%360+540)%360-180);
+function move(e){const[a]=pAng(e),t=getTime();
+ if(drag=='m'){const sn=Math.round(a/snap)*snap,d=((sn-aM)%360+540)%360-180;aM+=d;aH+=d/12}
+ else{const c=Math.round((a-t.m*.5)/30)*30+t.m*.5,d=((c-aH)%360+540)%360-180;aH+=d}
+ draw()}
+svg.addEventListener('pointerdown',e=>{if(!canDrag)return;const[a,r]=pAng(e),dh=dd(a,aH),dm=dd(a,aM);
+ drag=(r<85&&dh<40&&dh<=dm)?'h':'m';svg.setPointerCapture(e.pointerId);svg.classList.add('drag');move(e)});
+svg.addEventListener('pointermove',e=>{if(drag)move(e)});
+const endDrag=()=>{if(drag){drag=null;svg.classList.remove('drag')}};
+svg.addEventListener('pointerup',endDrag);svg.addEventListener('pointercancel',endDrag);
+
+// ---- sound + confetti
+let ac;function tone(f,t0,d,type='sine',v=.1){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+t0;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d)}catch(e){}}
+const yay=()=>{[523,659,784,1047,1319,1568,2093].forEach((f,i)=>tone(f,i*.08,.3,'triangle'));[1568,2093,2637].forEach((f,i)=>tone(f,.65+i*.07,.2,'sine',.06))};
+const oops=()=>{tone(392,0,.2);tone(311,.18,.32)};
+function conf(){const E=['🎀','⭐','💖','✨','🌸'];for(let i=0;i<22;i++){const d=document.createElement('span');d.className='cf';d.textContent=E[i%5];d.style.left=Math.random()*95+'vw';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),2600)}}
+
+// ---- modes
+let M='learn';
+function mode(m){M=m;card.dataset.m=m;$$('.tab').forEach(b=>b.classList.toggle('on',b.dataset.m==m));$$('.pn').forEach(p=>p.hidden=p.id!=m);
+ svg.dataset.hl='';canDrag=m=='play';snap=6;svg.style.touchAction=canDrag?'none':'auto';
+ if(m=='learn')step(0,-1);if(m=='play')setTime(3,30);if(m=='quiz')startQ()}
+$$('.tab').forEach(b=>b.onclick=()=>mode(b.dataset.m));
+
+// ---- learn
+const L=[
+{t:'أهلًا يا أمال! 🎀 يلا نتعلم الساعة سوا. دي الساعة، وفيها أرقام من 1 لحد 12، وكل رقم له مكان ثابت. 🕒',h:3,m:0,hl:'nums'},
+{t:'شوفي يا أمال، العقرب القصير الوردي بيقولنا الساعة كام. دلوقتي بيشاور على 3، يعني الساعة 3!',h:3,m:0,hl:'hour'},
+{t:'بصّي يا أمال! العقرب الطويل البنفسجي بيقيس الدقايق. لما يلف لفة كاملة تعدّي ساعة، والقصير بيتحرك رقم واحد! 🎡',h:4,m:0,hl:'min',spin:1},
+{t:'لما الطويل يقف على 12 والقصير على 5، يبقى الساعة 5 تمام يا أمال ✅',h:5,m:0,hl:'min'},
+{t:'شاطرة! لما الطويل ينزل على 6 → ونص! 🍕 نص لفة = نص ساعة.',h:5,m:30,hl:'min'},
+{t:'لما الطويل يبقى على 3 → وربع 🍰 (ربع لفة). سهلة يا أمال!',h:5,m:15,hl:'min'},
+{t:'ولما الطويل على 9 → إلا ربع. الساعة 6 إلا ربع يعني لسه ربع ساعة ونوصل 6!',h:5,m:45,hl:'min'},
+{t:'كل رقم على الساعة = 5 دقايق ⭐ شوفي الأرقام البنفسجية الصغيرة. الطويل على 4 يعني 20 دقيقة!',h:2,m:20,hl:'mins'},
+{t:'20 دقيقة = تلت ساعة 🍕 عشان كده بنقول "اتنين وتلت". والطويل على 4 هو تلت لفة!',h:2,m:20,hl:'min'},
+{t:'الطويل على 5 يعني 25 دقيقة. بنقول "اتنين ونص إلا خمسة" 🤗 يعني لسه خمس دقايق ونوصل للنص.',h:2,m:25,hl:'min'},
+{t:'والطويل على 7 يعني 35 دقيقة. بنقول "اتنين ونص وخمسة" يعني عدّينا النص بخمس دقايق.',h:2,m:35,hl:'min'},
+{t:'والطويل على 8 يعني 40 دقيقة. بنقول "تلاتة إلا تلت" يعني لسه تلت ساعة ونوصل 3 ⏳ برافو عليكي يا أمال، يلا نختبر! 🏆',h:2,m:40,hl:'min'}];
+let li=0;
+function step(i,prev){li=i;const s=L[i];$('#lt').textContent=s.t;svg.dataset.hl=s.hl;setTime(s.h,s.m,s.spin&&i>(prev??li-1));
+ $('#ld').innerHTML=L.map((_,j)=>`<i class="${j<=i?'on':''}"></i>`).join('');$('#lp').disabled=i==0;$('#ln').textContent=i==L.length-1?'يلا نختبر 🏆':'التالي ⏭'}
+$('#lp').onclick=()=>step(li-1,li);
+$('#ln').onclick=()=>li==L.length-1?mode('quiz'):step(li+1,li);
+
+// ---- play
+$$('.q').forEach(b=>b.onclick=()=>setTime(getTime().h,+b.dataset.m));
+$('#rnd').onclick=()=>setTime(1+rnd(12),rnd(12)*5);
+
+// ---- quiz
+let qi=0,sc=0,cur,done,key;
+function gen(i){const lv=i<3?0:i<6?1:2;const pool=lv==0?[0]:lv==1?[0,15,30,45]:[0,5,10,15,20,25,30,35,40,45,50,55];
+ return{h:1+rnd(12),m:pool[rnd(pool.length)],pool,type:i%2?'set':'read'}}
+function startQ(){qi=0;sc=0;$('#qend').hidden=true;$('#qgame').hidden=false;nextQ()}
+function nextQ(){if(qi>=10)return endQ();cur=gen(qi);done=false;key=K(cur.h,cur.m);svg.dataset.hl='';
+ $('#pb').style.width=qi*10+'%';$('#nx').hidden=true;const o=$('#opts');o.innerHTML='';
+ if(cur.type=='read'){canDrag=false;svg.style.touchAction='auto';$('#chk').hidden=true;setTime(cur.h,cur.m);
+  $('#qt').textContent=`${Q[qi]}: الساعة كام يا أمال؟ 👀`;
+  const S=new Set([key]);if(cur.m%5==0&&cur.m/5>=1&&cur.m/5!=cur.h)S.add(K(cur.m/5,(cur.h*5)%60));
+  while(S.size<4){const r=Math.random();S.add(r<.4?K(1+rnd(12),cur.m):r<.7?K(cur.h,cur.pool[rnd(cur.pool.length)]):K(1+rnd(12),cur.pool[rnd(cur.pool.length)]))}
+  [...S].sort(()=>Math.random()-.5).forEach(k=>{const b=document.createElement('button');const[kh,km]=k.split(':').map(Number);b.innerHTML=`<b>${k}</b><small>${spoken(kh,km)}</small>`;b.dataset.k=k;b.onclick=()=>{if(done)return;if(k!=key)b.classList.add('bad');fin(k==key)};o.appendChild(b)})}
+ else{canDrag=true;snap=30;svg.style.touchAction='none';$('#chk').hidden=false;setTime(12,0);
+  $('#qt').textContent=`${Q[qi]}: حرّكي العقارب يا أمال لحد ما تبقى ${say(cur.h,cur.m)} ✋`}}
+function fin(ok){if(done)return;done=true;canDrag=false;$('#chk').hidden=true;$('#nx').hidden=false;
+ if(ok){sc++;conf();yay();$('#qt').textContent=['برافو يا أمال! 🎉','أمال شاطرة أوي ⭐','صح كده يا أمال! أنتِ بطلة 🏆','يا سلام يا أمال! 💖','أمال جامدة! كمّلي يا قمر ✨'][rnd(5)]}
+ else{oops();setTimeout(()=>setTime(cur.h,cur.m),500);$('#qt').textContent=`${['معلش يا أمال، المرة الجاية هتظبطيها 💪','ولا يهمك يا أمال، جرّبي تاني 🌸','يا أمال قربتي! ركّزي شوية 🎀'][rnd(3)]} الصح: ${say(cur.h,cur.m)}. القصير على ${cur.h}، والطويل على ${cur.m/5||12}.`}
+ $('#pb').style.width=(qi+1)*10+'%';$$('#opts button').forEach(b=>{b.disabled=true;if(b.dataset.k==key)b.classList.add('good')})}
+$('#chk').onclick=()=>{const t=getTime();fin(t.h==cur.h&&t.m==cur.m)};
+$('#nx').onclick=()=>{qi++;nextQ()};
+function endQ(){const st=sc>=9?3:sc>=6?2:1;$('#qgame').hidden=true;const e=$('#qend');e.hidden=false;canDrag=false;setTime(12,0);
+ e.innerHTML=`<div class="big">${'⭐'.repeat(st)}</div><h2>نتيجتك ${sc} من 10</h2><p>${sc>=9?'أمال بطلة الساعة! 🏆':sc>=6?'برافو يا أمال! كمان شوية وتبقي بطلة 💪':'ولا يهمك يا أمال، راجعي الدرس وجرّبي تاني 🌈'}</p><div class="row"><button class="btn ok" id="again">العبي تاني 🔁</button><button class="btn" id="back">راجعي الدرس 📖</button></div>`;
+ if(sc>=6)conf();$('#again').onclick=startQ;$('#back').onclick=()=>mode('learn')}
+
+mode('learn');
+</script>
+</body>
+</html>
