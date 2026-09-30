@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ساعة أمال 🎀</title>
+<title>ساعة المرح – تعلّم الساعة</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg1:#ffd9ec;--bg2:#e6d4ff;--card:#fff;--ink:#3a2a4d;--hour:#ff4f9a;--min:#8e5bd6;--ok:#2fc58a;--bad:#ff8a5c;--accent:#ffc4e1;--face:#fff8fc;--rim:#ff8fc7;--dot:#0002;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -62,6 +62,39 @@ svg.drag .hand{transition:none}
 .choices button{display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.2}
 .choices small{font-size:clamp(14px,3.8vw,19px);font-weight:700;color:var(--min);direction:rtl}
 .choices .good small,.choices .bad small{color:#fff}
+/* fit-to-screen: no page scroll */
+body{min-height:0;overflow:hidden}
+.wrap{width:100%;max-width:520px;height:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));margin:0 auto;padding:clamp(6px,1.2dvh,12px) 12px;display:flex;flex-direction:column;gap:clamp(4px,1dvh,10px)}
+h1{margin:0;font-size:clamp(18px,4dvh,30px);line-height:1.1;flex:none}
+.tabs{margin:0;flex:none}
+.tab{padding:clamp(5px,1dvh,10px) 4px;font-size:clamp(14px,2.6dvh,19px)}
+.card{flex:1;min-height:0;display:flex;flex-direction:column;padding:clamp(8px,1.4dvh,14px);overflow:hidden auto}
+.stage{flex:1 1 0;min-height:0;display:flex;flex-direction:column}
+#clk{flex:1 1 0;height:0;min-height:110px;width:100%;max-width:none;margin:0}
+.side{flex:none}
+#dig{font-size:clamp(24px,5.5dvh,46px);margin:0;line-height:1.05}
+#sayT{font-size:clamp(14px,2.6dvh,21px);min-height:0;line-height:1.3}
+.bub{margin-top:clamp(4px,1dvh,10px);padding:clamp(6px,1.2dvh,12px) 12px;font-size:clamp(14px,2.5dvh,20px);line-height:1.35;gap:8px}
+.owl{width:clamp(36px,7dvh,56px);height:clamp(36px,7dvh,56px)}
+.dots{margin-top:clamp(2px,.6dvh,8px)}
+.dots i{width:8px;height:8px}
+.row{margin-top:clamp(4px,1dvh,10px);gap:6px}
+.btn{padding:clamp(6px,1.1dvh,11px) 16px;font-size:clamp(15px,2.6dvh,21px)}
+.choices{margin-top:clamp(4px,1dvh,10px);gap:clamp(5px,1dvh,10px)}
+.choices button{padding:clamp(3px,.8dvh,10px);font-size:clamp(20px,4dvh,32px)}
+.choices small{font-size:clamp(12px,2.1dvh,18px)}
+.hint{font-size:clamp(11px,1.7dvh,14px);margin-bottom:2px}
+.prog{height:clamp(8px,1.3dvh,12px)}
+.big{font-size:clamp(32px,7dvh,56px)}
+#qend h2{margin:4px 0}#qend p{margin:4px 0}
+@media (min-width:700px){
+.wrap{max-width:1040px;padding:clamp(8px,2dvh,22px) 22px}
+.card{display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:minmax(0,1fr);gap:24px;align-items:center;padding:clamp(10px,2dvh,26px)}
+.stage{align-self:stretch}
+.side{max-height:100%;overflow-y:auto}
+.tabs{max-width:560px;margin:0 auto;width:100%}
+h1{font-size:clamp(20px,4.2dvh,36px)}
+}
 @media (prefers-reduced-motion:reduce){.owl,[data-hl] *{animation:none!important}}
 </style>
 </head>
@@ -79,7 +112,7 @@ svg.drag .hand{transition:none}
 <path d="M32 15L20 8v14zM32 15l12-7v14z" fill="#ff4f9a"/><circle cx="32" cy="15" r="4.5" fill="#ff80b8"/>
 </symbol></svg>
 <div class="wrap">
-<h1>🎀 ساعة أمال 🎀</h1>
+<h1>🎀 ساعة المرح 🎀</h1>
 <div class="tabs">
 <button class="tab on" data-m="learn">📖 تعلّمي</button>
 <button class="tab" data-m="play">🎮 جرّبي</button>
@@ -162,7 +195,7 @@ function setTime(h,m,spin){const tm=m*6,th=(h%12)*30+m*.5;
  svg.style.setProperty('--t',spin?'2.6s':'.9s');aM+=dm;aH+=dh;draw()}
 
 // ---- dragging
-function pAng(e){const r=svg.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2);return[(Math.atan2(x,-y)*180/Math.PI+360)%360,Math.hypot(x,y)/(r.width/300)]}
+function pAng(e){const r=svg.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2);return[(Math.atan2(x,-y)*180/Math.PI+360)%360,Math.hypot(x,y)/(Math.min(r.width,r.height)/300)]}
 const dd=(a,b)=>Math.abs(((a-b)%360+540)%360-180);
 function move(e){const[a]=pAng(e),t=getTime();
  if(drag=='m'){const sn=Math.round(a/snap)*snap,d=((sn-aM)%360+540)%360-180;aM+=d;aH+=d/12}
