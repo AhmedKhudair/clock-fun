@@ -135,7 +135,7 @@ h1{font-size:clamp(20px,4.2dvh,36px)}
 <div id="play" class="pn" hidden>
 <div class="bub"><svg class="owl" viewBox="0 0 64 64"><use href="#wz"/></svg><p>اسحبي العقارب بصباعك يا أمال وشوفي الساعة بتتغير! 👆<br>الوردي القصير = ساعات، البنفسجي الطويل = دقايق.</p></div>
 <div class="row">
-<button class="btn q" data-m="0">تمام</button><button class="btn q" data-m="15">وربع</button><button class="btn q" data-m="30">ونص</button><button class="btn q" data-m="45">إلا ربع</button><button class="btn ok" id="rnd">🎲 ساعة عشوائية</button>
+<button class="btn q" data-m="0">بالظبط</button><button class="btn q" data-m="15">وربع</button><button class="btn q" data-m="30">ونص</button><button class="btn q" data-m="45">إلا ربع</button><button class="btn ok" id="rnd">🎲 ساعة عشوائية</button>
 </div>
 </div>
 
@@ -176,7 +176,7 @@ const hH=$('#hH'),hM=$('#hM');
 function getTime(){const m=Math.round((((aM%360)+360)%360)/6)%60;const ah=((aH%360)+360)%360;let h=Math.round((ah-m*.5)/30);h=((h%12)+12)%12;return{h:h||12,m}}
 const dq=x=>x==1?'دقيقة واحدة':x==2?'دقيقتين':x<=10?x+' دقايق':x+' دقيقة';
 function sayG(h,m){const n=x=>NAMES[x>12?x-12:x],nx=h%12+1;
- if(m==0)return `الساعة ${n(h)} تمام`;
+ if(m==0)return `الساعة ${n(h)} بالظبط`;
  if(m==30)return `الساعة ${n(h)} ونص`;
  if(m==15)return `الساعة ${n(h)} وربع`;
  if(m==45)return `الساعة ${n(nx)} إلا ربع`;
@@ -185,7 +185,7 @@ function sayG(h,m){const n=x=>NAMES[x>12?x-12:x],nx=h%12+1;
 function egy(h,m){const n=x=>NAMES[x>12?x-12:x],nx=h%12+1;
  return({5:n(h)+' وخمسة',10:n(h)+' وعشرة',20:n(h)+' وتلت',25:n(h)+' ونص إلا خمسة',35:n(h)+' ونص وخمسة',40:n(nx)+' إلا تلت',50:n(nx)+' إلا عشرة',55:n(nx)+' إلا خمسة'})[m]||''}
 function spoken(h,m){const n=x=>NAMES[x>12?x-12:x],nx=h%12+1;
- if(m==0)return n(h)+' تمام';if(m==15)return n(h)+' وربع';if(m==30)return n(h)+' ونص';if(m==45)return n(nx)+' إلا ربع';
+ if(m==0)return n(h)+' بالظبط';if(m==15)return n(h)+' وربع';if(m==30)return n(h)+' ونص';if(m==45)return n(nx)+' إلا ربع';
  return egy(h,m)||sayG(h,m).replace('الساعة ','')}
 function say(h,m){const e=egy(h,m);return sayG(h,m)+(e?` (${e})`:'')}
 function draw(){hH.style.transform=`rotate(${aH}deg)`;hM.style.transform=`rotate(${aM}deg)`;const t=getTime();$('#dig').textContent=K(t.h,t.m);const e=egy(t.h,t.m);$('#sayT').innerHTML=sayG(t.h,t.m)+(e?` <span class="eg">(${e})</span>`:'')}
@@ -225,7 +225,7 @@ const L=[
 {t:'أهلًا يا أمال! 🎀 يلا نتعلم الساعة سوا. دي الساعة، وفيها أرقام من 1 لحد 12، وكل رقم له مكان ثابت. 🕒',h:3,m:0,hl:'nums'},
 {t:'شوفي يا أمال، العقرب القصير الوردي بيقولنا الساعة كام. دلوقتي بيشاور على 3، يعني الساعة 3!',h:3,m:0,hl:'hour'},
 {t:'بصّي يا أمال! العقرب الطويل البنفسجي بيقيس الدقايق. لما يلف لفة كاملة تعدّي ساعة، والقصير بيتحرك رقم واحد! 🎡',h:4,m:0,hl:'min',spin:1},
-{t:'لما الطويل يقف على 12 والقصير على 5، يبقى الساعة 5 تمام يا أمال ✅',h:5,m:0,hl:'min'},
+{t:'لما الطويل يقف على 12 والقصير على 5، يبقى الساعة 5 بالظبط يا أمال ✅',h:5,m:0,hl:'min'},
 {t:'شاطرة! لما الطويل ينزل على 6 → ونص! 🍕 نص لفة = نص ساعة.',h:5,m:30,hl:'min'},
 {t:'لما الطويل يبقى على 3 → وربع 🍰 (ربع لفة). سهلة يا أمال!',h:5,m:15,hl:'min'},
 {t:'ولما الطويل على 9 → إلا ربع. الساعة 6 إلا ربع يعني لسه ربع ساعة ونوصل 6!',h:5,m:45,hl:'min'},
